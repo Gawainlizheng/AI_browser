@@ -17,15 +17,18 @@ public class Browser {
     private WebEngine webEngine;
     private TextField urlField;
     private TextArea scriptArea;
+    private TextArea progressLog;
     private ScriptEngine scriptEngine;
-    private SplitPane mainLayout;  // Store the main layout as a field
+    private SplitPane mainLayout;
 
     public Browser() {
         webView = new WebView();
         webEngine = webView.getEngine();
         urlField = new TextField("https://www.google.com/");
         scriptArea = new TextArea();
-        scriptEngine = new ScriptEngine(webEngine);
+        progressLog = new TextArea();
+        progressLog.setEditable(false);
+        scriptEngine = new ScriptEngine(webEngine, progressLog);
 
         setupUI();
     }
@@ -35,11 +38,17 @@ public class Browser {
 
         // Create execute button for scripts
         Button executeButton = new Button("Execute Script");
-        executeButton.setOnAction(e -> scriptEngine.executeScript(scriptArea.getText()));
+        executeButton.setOnAction(e -> {
+            progressLog.appendText("=== Executing Script ===\n");
+            scriptEngine.executeScript(scriptArea.getText());
+        });
 
         // Create script controls panel
-        HBox scriptControls = new HBox(executeButton);
-        VBox scriptPanel = new VBox(scriptArea, scriptControls);
+        VBox scriptPanel = new VBox(
+                new VBox(scriptArea, executeButton),
+                new VBox(progressLog)
+        );
+        scriptPanel.setSpacing(10);
 
         // Create browser layout
         BorderPane browserLayout = new BorderPane();
@@ -49,11 +58,11 @@ public class Browser {
         // Create main split pane
         mainLayout = new SplitPane();
         mainLayout.getItems().addAll(browserLayout, scriptPanel);
-        mainLayout.setDividerPosition(0, 0.7); // 70% for browser, 30% for script
+        mainLayout.setDividerPosition(0, 0.7);
     }
 
     public Scene getScene() {
-        return new Scene(mainLayout, 1200, 800);  // Use the stored mainLayout
+        return new Scene(mainLayout, 1200, 800);
     }
 
     public void loadInitialUrl() {

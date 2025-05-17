@@ -6,6 +6,15 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+
+    /*
+    go https://www.google.com/
+    wait 10s
+    search Google Search = @baidu
+    input #APjFqb abd
+    click @baidu
+    * */
+
     @Override
     public void start(Stage primaryStage) {
         Browser browser = new Browser();
